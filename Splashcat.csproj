@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\assets\attract.mp3" />
+    <None Include="wwwroot\assets\background-1.png" />
+    <None Include="wwwroot\assets\bonuses.mp3" />
+    <None Include="wwwroot\assets\bonuses.png" />
+    <None Include="wwwroot\assets\box.png" />
+    <None Include="wwwroot\assets\cat.png" />
+    <None Include="wwwroot\assets\catnip.mp3" />
+    <None Include="wwwroot\assets\controls.png" />
+    <None Include="wwwroot\assets\crash.mp3" />
+    <None Include="wwwroot\assets\death.mp3" />
+    <None Include="wwwroot\assets\ground-1.png" />
+    <None Include="wwwroot\assets\jump.mp3" />
+    <None Include="wwwroot\assets\large-1-1.png" />
+    <None Include="wwwroot\assets\large-1.png" />
+    <None Include="wwwroot\assets\large-2-1.png" />
+    <None Include="wwwroot\assets\level-1.mp3" />
+    <None Include="wwwroot\assets\meow.mp3" />
+    <None Include="wwwroot\assets\slow-1.mp3" />
+    <None Include="wwwroot\assets\slow-1.png" />
+    <None Include="wwwroot\assets\slow-2.png" />
+    <None Include="wwwroot\assets\small-1.mp3" />
+    <None Include="wwwroot\assets\small-1.png" />
+    <None Include="wwwroot\assets\start.png" />
+    <None Include="wwwroot\assets\tentacle.png" />
+    <None Include="wwwroot\assets\title.png" />
+    <None Include="wwwroot\assets\victory.mp3" />
+    <None Include="wwwroot\assets\widget.png" />
+    <None Include="wwwroot\index.html" />
+    <None Include="wwwroot\splashcat.js" />
+  </ItemGroup>
+
+</Project>
