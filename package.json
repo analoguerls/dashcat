@@ -1,5 +1,12 @@
 {
-  "dependencies": {
+  "name": "splashcat",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint": "eslint ."
+  },
+  "devDependencies": {
     "eslint": "^9.33.0"
   }
 }

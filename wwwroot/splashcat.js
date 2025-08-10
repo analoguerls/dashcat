@@ -1,11 +1,4 @@
 ﻿/* global setTimeout */
-/* eslint-disable array-element-newline */
-/* eslint-disable complexity */
-/* eslint-disable max-lines */
-/* eslint-disable max-lines-per-function */
-/* eslint-disable max-statements */
-/* eslint-disable new-cap */
-/* eslint-disable no-magic-numbers */
 (function (document, kontra, settings, window) {
     'use strict';
 
@@ -40,9 +33,7 @@
             speedMax: 12,
             time: 0
         },
-        getPosition = function (width, x) {
-            return x + (2 * width); // eslint-disable-line no-extra-parens
-        },
+        getPosition = (width, x) => x + (2 * width),
         jump = {
             gravity: 4,
             ground: settings.height - 96,
@@ -68,7 +59,7 @@
             sheets: {},
             sprites: []
         },
-        reset = function (full, levelUp) {
+        reset = (full, levelUp) => {
             if (full) {
                 fly.thrust = settings.thrust;
                 game.difficulty = settings.difficulty;
@@ -110,10 +101,8 @@
                 game.level = kontra.clamp(1, 4, game.level + 1);
             }
         },
-        setDx = function () {
-            return -game.speed + (objects.cat.isWet ? fly.thrust / game.entropy : 0);
-        },
-        spawnSprite = function (obstacle, overrideChoice, overrideOffset) {
+        setDx = () => -game.speed + (objects.cat.isWet ? fly.thrust / game.entropy : 0),
+        spawnSprite = (obstacle, overrideChoice, overrideOffset) => {
             const choice = overrideChoice || kontra.randInt(0, 5);
             let
                 animation = '',
@@ -233,7 +222,7 @@
         'slow-1.mp3', 'slow-1.png', 'slow-2.png', 'small-1.mp3', 'small-1.png', 'start.png', 'tentacle.png', 'title.png', 'victory.mp3', 'widget.png'
     ).then(() => {
         const
-            crash = function (index, type) {
+            crash = (index, type) => {
                 if (game.lives > 0 && game.loop.isStopped) {
                     setTimeout(() => {
                         if (type === 'large') {
@@ -247,7 +236,13 @@
                     }, 1500);
                 }
             },
-            over = function () {
+            createSheet = (name, config) => objects.sheets[name] = kontra.SpriteSheet(config),
+            createSprite = (config) => {
+                const sprite = kontra.Sprite(config);
+
+                return sprite;
+            },
+            over = () => {
                 setTimeout(() => {
                     if (game.over) {
                         game.attract.start();
@@ -261,7 +256,7 @@
         game.loaded = true;
 
         // Sprite Sheets
-        objects.sheets.bonuses = kontra.SpriteSheet({
+        createSheet('bonuses', {
             animations: {
                 box: {
                     frameRate: 10,
@@ -284,7 +279,7 @@
             frameWidth: 42,
             image: kontra.imageAssets.bonuses
         });
-        objects.sheets.box = kontra.SpriteSheet({
+        createSheet('box', {
             animations: {
                 'fall-1': {
                     frameRate: 10,
@@ -359,7 +354,7 @@
             frameWidth: 100,
             image: kontra.imageAssets.box
         });
-        objects.sheets.cat = kontra.SpriteSheet({
+        createSheet('cat', {
             animations: {
                 dead: {
                     frameRate: 0,
@@ -406,7 +401,7 @@
             frameWidth: 75,
             image: kontra.imageAssets.cat
         });
-        objects.sheets.small = kontra.SpriteSheet({
+        createSheet('small', {
             animations: {
                 active: {
                     frameRate: 5,
@@ -421,7 +416,7 @@
             frameWidth: 40,
             image: kontra.imageAssets[`small-${game.level}`]
         });
-        objects.sheets.tentacle = kontra.SpriteSheet({
+        createSheet('tentacle', {
             animations: {
                 active: {
                     frameRate: 5,
@@ -440,7 +435,7 @@
             frameWidth: 47,
             image: kontra.imageAssets.tentacle
         });
-        objects.sheets.title = kontra.SpriteSheet({
+        createSheet('title', {
             animations: {
                 active: {
                     frameRate: 5,
