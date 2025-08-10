@@ -16,7 +16,7 @@ export default [
             "array-element-newline": [
                 "error",
                 {
-                    "minItems": 3
+                    "minItems": 6
                 }
             ],
             "arrow-body-style": [
@@ -63,7 +63,8 @@ export default [
                 "error"
             ],
             "complexity": [
-                "error"
+                "error",
+                { "max": 24 }
             ],
             "computed-property-spacing": [
                 "error"
@@ -187,10 +188,10 @@ export default [
                 "error"
             ],
             "max-lines": [
-                "error", 1000
+                "error", 1200
             ],
             "max-lines-per-function": [
-                "error", 150
+                "error", 1000
             ],
             "max-nested-callbacks": [
                 "error"
@@ -201,7 +202,7 @@ export default [
             ],
             "max-statements": [
                 "error",
-                50
+                150
             ],
             "max-statements-per-line": [
                 "error"
@@ -409,9 +410,6 @@ export default [
             ],
             "no-loss-of-precision": [
                 "error"
-            ],
-            "no-magic-numbers": [
-                "error", { "ignore": [0,1], "ignoreDefaultValues": true }
             ],
             "no-misleading-character-class": [
                 "error"

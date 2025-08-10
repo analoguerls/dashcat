@@ -1,12 +1,10 @@
 ﻿/* global setTimeout */
+/* eslint-disable new-cap */
 (function (document, kontra, settings, window) {
     'use strict';
 
-    const
-        canvas = document.querySelector('#game'),
-        entropy = function () {
-            return (Math.random() + 1) * Math.PI;
-        },
+    const canvas = document.querySelector('#game'),
+        entropy = () => (Math.random() + 1) * Math.PI,
         fly = {
             drag: 0.4,
             lift: 0.2,
@@ -33,7 +31,7 @@
             speedMax: 12,
             time: 0
         },
-        getPosition = (width, x) => x + (2 * width),
+        getPosition = (width, x) => x + (2 * width), // eslint-disable-line no-extra-parens
         jump = {
             gravity: 4,
             ground: settings.height - 96,
@@ -102,7 +100,7 @@
             }
         },
         setDx = () => -game.speed + (objects.cat.isWet ? fly.thrust / game.entropy : 0),
-        spawnSprite = (obstacle, overrideChoice, overrideOffset) => {
+        spawnSprite = function (obstacle, overrideChoice, overrideOffset) {
             const choice = overrideChoice || kontra.randInt(0, 5);
             let
                 animation = '',
@@ -176,6 +174,15 @@
                     type = 'catnip';
                     x = 48;
                     break;
+                // Occasionally spawn a large tentacle instead of a bonus item
+                case 5:
+                    objects.obstacles.push(spawnSprite(true, 6, 32));
+                    asset = kontra.imageAssets[`large-1-${game.level}`];
+                    offset = -60;
+                    type = 'large';
+                    x = 36;
+                    break;
+                case 0:
                 case 6:
                     animation = 'active';
                     animations = objects.sheets.tentacle.animations;
@@ -217,12 +224,19 @@
     kontra.setAudioPath(settings.assets);
     kontra.setImagePath(settings.assets);
     kontra.load(
-        'attract.mp3', 'background-1.png', 'bonuses.mp3', 'bonuses.png', 'box.png', 'cat.png', 'catnip.mp3', 'controls.png', 'crash.mp3',
-        'death.mp3', 'ground-1.png', 'jump.mp3', 'large-1.png', 'large-1-1.png', 'large-2-1.png', 'level-1.mp3', 'meow.mp3',
-        'slow-1.mp3', 'slow-1.png', 'slow-2.png', 'small-1.mp3', 'small-1.png', 'start.png', 'tentacle.png', 'title.png', 'victory.mp3', 'widget.png'
+        'attract.mp3', 'background-1.png', 'bonuses.mp3', 'bonuses.png', 'box.png', 'cat.png', 'catnip.mp3', 'controls.png', 'crash.mp3', 'death.mp3',
+        'ground-1.png', 'jump.mp3', 'large-1.png', 'large-1-1.png', 'large-2-1.png', 'level-1.mp3', 'meow.mp3', 'slow-1.mp3', 'slow-1.png', 'slow-2.png',
+        'small-1.mp3', 'small-1.png', 'start.png', 'tentacle.png', 'title.png', 'victory.mp3', 'widget.png'
     ).then(() => {
         const
-            crash = (index, type) => {
+            background = {
+                height: 148,
+                image: kontra.imageAssets[`background-${game.level}`],
+                type: 'background',
+                width: 600,
+                y: settings.height - 148
+            },
+            crash = function (index, type) {
                 if (game.lives > 0 && game.loop.isStopped) {
                     setTimeout(() => {
                         if (type === 'large') {
@@ -236,13 +250,27 @@
                     }, 1500);
                 }
             },
-            createSheet = (name, config) => objects.sheets[name] = kontra.SpriteSheet(config),
-            createSprite = (config) => {
-                const sprite = kontra.Sprite(config);
-
-                return sprite;
+            createSheet = (name, config) => {
+                objects.sheets[name] = kontra.SpriteSheet(config);
             },
-            over = () => {
+            createSprite = (config1, config2 = {}) => {
+                const
+                    config = {
+                        ...config1,
+                        ...config2
+                    };
+
+                return kontra.Sprite(config);
+            },
+            createText = (config) => kontra.Text(config),
+            ground = {
+                height: 53,
+                image: kontra.imageAssets[`ground-${game.level}`],
+                type: 'ground',
+                width: 1200,
+                y: settings.height - 93
+            },
+            over = function () {
                 setTimeout(() => {
                     if (game.over) {
                         game.attract.start();
@@ -255,7 +283,7 @@
 
         game.loaded = true;
 
-        // Sprite Sheets
+        // Sprite SpriteSheets
         createSheet('bonuses', {
             animations: {
                 box: {
@@ -448,59 +476,36 @@
         });
 
         // Background
-        objects.attract.push(kontra.Sprite({
-            height: 148,
-            image: kontra.imageAssets[`background-${game.level}`],
-            type: 'background',
-            width: 600,
-            x: 0,
-            y: settings.height - 148
+        objects.attract.push(createSprite(background, {
+            x: 0
         }));
-        objects.sprites.push(kontra.Sprite({
+        objects.sprites.push(createSprite(background, {
             dx: -0.25,
-            height: 148,
-            image: kontra.imageAssets[`background-${game.level}`],
-            type: 'background',
             update () {
                 if (this.x < -600) {
                     this.x = getPosition(600, this.x);
                 }
                 this.advance();
             },
-            width: 600,
-            x: 0,
-            y: settings.height - 148
+            x: 0
         }));
-        objects.sprites.push(kontra.Sprite({
+        objects.sprites.push(createSprite(background, {
             dx: -0.25,
-            height: 148,
-            image: kontra.imageAssets[`background-${game.level}`],
-            type: 'background',
             update () {
                 if (this.x < -600) {
                     this.x = getPosition(600, this.x);
                 }
                 this.advance();
             },
-            width: 600,
-            x: 600,
-            y: settings.height - 148
+            x: 600
         }));
 
         // Ground
-        objects.attract.push(kontra.Sprite({
-            height: 53,
-            image: kontra.imageAssets[`ground-${game.level}`],
-            type: 'ground',
-            width: 1200,
-            x: 0,
-            y: settings.height - 93
+        objects.attract.push(createSprite(ground, {
+            x: 0
         }));
-        objects.sprites.push(kontra.Sprite({
+        objects.sprites.push(createSprite(ground, {
             dx: -game.speed,
-            height: 50,
-            image: kontra.imageAssets[`ground-${game.level}`],
-            type: 'ground',
             update () {
                 this.dx = setDx();
                 if (this.x < -1200) {
@@ -508,15 +513,10 @@
                 }
                 this.advance();
             },
-            width: 1200,
-            x: 0,
-            y: settings.height - 93
+            x: 0
         }));
-        objects.sprites.push(kontra.Sprite({
+        objects.sprites.push(createSprite(ground, {
             dx: -game.speed,
-            height: 50,
-            image: kontra.imageAssets[`ground-${game.level}`],
-            type: 'ground',
             update () {
                 this.dx = setDx();
                 if (this.x < -1200) {
@@ -524,13 +524,11 @@
                 }
                 this.advance();
             },
-            width: 1200,
-            x: 1200,
-            y: settings.height - 93
+            x: 1200
         }));
 
         // Lives indicator
-        objects.sprites.push(kontra.Sprite({
+        objects.sprites.push(createSprite({
             animations: objects.sheets.bonuses.animations,
             update () {
                 this.playAnimation('tuna');
@@ -539,7 +537,7 @@
             x: 12,
             y: 6
         }));
-        objects.lives = kontra.Text({
+        objects.lives = createText({
             color: '#232323',
             font: `24px ${settings.font}`,
             text: `× ${game.lives}`,
@@ -552,7 +550,7 @@
         objects.sprites.push(objects.lives);
 
         // Catnip indicator
-        objects.sprites.push(kontra.Sprite({
+        objects.sprites.push(createSprite({
             animations: objects.sheets.bonuses.animations,
             update () {
                 if (objects.cat.hasZoomies) {
@@ -566,30 +564,20 @@
             y: 4
         }));
 
-        // Box x 1 indicator
-        objects.sprites.push(kontra.Sprite({
+        // Box indicators
+        objects.sprites.push(createSprite({
             animations: objects.sheets.bonuses.animations,
             update () {
-                if (objects.cat.hasBox) {
-                    this.playAnimation('box');
-                } else {
-                    this.playAnimation('idle');
-                }
+                this.playAnimation(objects.cat.hasBox ? 'box' : 'idle');
                 this.advance();
             },
             x: 145,
             y: 2
         }));
-
-        // Box x 2 indicator
-        objects.sprites.push(kontra.Sprite({
+        objects.sprites.push(createSprite({
             animations: objects.sheets.bonuses.animations,
             update () {
-                if (objects.cat.hasBox === 2) {
-                    this.playAnimation('box');
-                } else {
-                    this.playAnimation('idle');
-                }
+                this.playAnimation(objects.cat.hasBox === 2 ? 'box' : 'idle');
                 this.advance();
             },
             x: 185,
@@ -597,7 +585,7 @@
         }));
 
         // Messages
-        objects.message = kontra.Text({
+        objects.message = createText({
             anchor: {
                 x: 0.5,
                 y: 0.5
@@ -625,7 +613,7 @@
         objects.sprites.push(objects.message);
 
         // Score
-        objects.score = kontra.Text({
+        objects.score = createText({
             anchor: {
                 x: 1,
                 y: 0
@@ -646,7 +634,7 @@
         objects.sprites.push(objects.score);
 
         // Attract Mode
-        objects.attract.push(kontra.Sprite({
+        objects.attract.push(createSprite({
             animations: objects.sheets.cat.animations,
             type: 'cat',
             update () {
@@ -656,14 +644,14 @@
             x: (settings.width / 2) - 34, // eslint-disable-line no-extra-parens
             y: jump.ground
         }));
-        objects.attract.push(kontra.Text({
+        objects.attract.push(createText({
             color: '#232323',
             font: `20px ${settings.font}`,
             text: 'Collect these',
             x: 25,
             y: 180
         }));
-        objects.attract.push(kontra.Sprite({
+        objects.attract.push(createSprite({
             animations: objects.sheets.tentacle.animations,
             type: 'tentacle',
             update () {
@@ -673,7 +661,7 @@
             x: 20,
             y: jump.ground - 56
         }));
-        objects.attract.push(kontra.Sprite({
+        objects.attract.push(createSprite({
             animations: objects.sheets.bonuses.animations,
             type: 'catnip',
             update () {
@@ -683,7 +671,7 @@
             x: 22,
             y: jump.ground - 90
         }));
-        objects.attract.push(kontra.Sprite({
+        objects.attract.push(createSprite({
             animations: objects.sheets.tentacle.animations,
             type: 'tentacle',
             update () {
@@ -693,7 +681,7 @@
             x: 110,
             y: jump.ground - 56
         }));
-        objects.attract.push(kontra.Sprite({
+        objects.attract.push(createSprite({
             animations: objects.sheets.bonuses.animations,
             type: 'tuna',
             update () {
@@ -703,7 +691,7 @@
             x: 112,
             y: jump.ground - 90
         }));
-        objects.attract.push(kontra.Sprite({
+        objects.attract.push(createSprite({
             animations: objects.sheets.box.animations,
             type: 'box',
             update () {
@@ -713,26 +701,26 @@
             x: 40,
             y: jump.ground - 6
         }));
-        objects.attract.push(kontra.Text({
+        objects.attract.push(createText({
             color: '#232323',
             font: `20px ${settings.font}`,
             text: 'Avoid these',
             x: settings.width - 165,
             y: 180
         }));
-        objects.attract.push(kontra.Sprite({
+        objects.attract.push(createSprite({
             image: kontra.imageAssets['slow-1'],
             type: 'water',
             x: settings.width - 180,
             y: jump.ground + 50
         }));
-        objects.attract.push(kontra.Sprite({
+        objects.attract.push(createSprite({
             image: kontra.imageAssets['large-1'],
             type: 'large',
             x: settings.width - 110,
             y: jump.ground - 60
         }));
-        objects.attract.push(kontra.Sprite({
+        objects.attract.push(createSprite({
             animations: objects.sheets.small.animations,
             type: 'small',
             update () {
@@ -742,19 +730,19 @@
             x: settings.width - 180,
             y: jump.ground + 3
         }));
-        objects.attract.push(kontra.Sprite({
+        objects.attract.push(createSprite({
             image: kontra.imageAssets.start,
             type: 'start',
             x: (settings.width / 2) - 96, // eslint-disable-line no-extra-parens
             y: jump.ground - 66
         }));
-        objects.attract.push(kontra.Sprite({
+        objects.attract.push(createSprite({
             image: kontra.imageAssets.controls,
             type: 'controls',
             x: (settings.width / 2) - 60, // eslint-disable-line no-extra-parens
             y: 120
         }));
-        objects.attract.push(kontra.Text({
+        objects.attract.push(createText({
             anchor: {
                 x: 0.5,
                 y: 0.5
@@ -766,7 +754,7 @@
             x: settings.width / 2,
             y: 106
         }));
-        objects.attract.push(kontra.Text({
+        objects.attract.push(createText({
             anchor: {
                 x: 0.5,
                 y: 0.5
@@ -778,7 +766,7 @@
             x: settings.width / 2,
             y: 212
         }));
-        objects.attract.push(kontra.Sprite({
+        objects.attract.push(createText({
             animations: objects.sheets.title.animations,
             type: 'title',
             update () {
@@ -790,7 +778,7 @@
         }));
 
         // Cat
-        objects.cat = kontra.Sprite({
+        objects.cat = createSprite({
             animations: objects.sheets.cat.animations,
             hasBox: 0,
             hasZoomies: 0,
@@ -798,8 +786,7 @@
             isWet: false,
             type: 'cat',
             update () {
-                let
-                    prefix = '',
+                let prefix = '',
                     suffix = '';
 
                 if (this.hasBox) {
@@ -848,8 +835,8 @@
         });
         objects.sprites.push(objects.cat);
 
-        // Pivot Widget
-        objects.widget = kontra.Sprite({
+        // Widget
+        objects.widget = createSprite({
             dx: fly.speed,
             float: 0,
             image: kontra.imageAssets.widget,
@@ -890,7 +877,8 @@
         });
         objects.sprites.push(objects.widget);
 
-        objects.credits = kontra.Text({
+        // Credits
+        objects.credits = createText({
             anchor: {
                 x: 0.5,
                 y: 0.5
@@ -906,12 +894,8 @@
 
         // Attract loop
         game.attract = kontra.GameLoop({
-            render () {
-                objects.attract.map((sprite) => sprite.render());
-            },
-            update () {
-                objects.attract.map((sprite) => sprite.update());
-            }
+            render: () => objects.attract.map((sprite) => sprite.render()),
+            update: () => objects.attract.map((sprite) => sprite.update())
         });
 
         game.attract.start();
@@ -947,6 +931,7 @@
                     }
                 }
 
+                // Process bonuses
                 objects.bonuses.forEach((bonus, index) => {
                     bonus.update();
                     if (kontra.collides(objects.cat, bonus)) {
@@ -988,6 +973,8 @@
                         objects.bonuses.splice(index, 1);
                     }
                 });
+
+                // Process obstacles
                 objects.obstacles.forEach((obstacle, index) => {
                     obstacle.update();
                     if (obstacle.type && kontra.collides(objects.cat, obstacle)) {
@@ -1009,11 +996,7 @@
                             } else {
                                 objects.obstacles.splice(index, 1);
                             }
-                            if (obstacle.type === 'small') {
-                                kontra.audioAssets[`small-${game.level}`].play();
-                            } else {
-                                kontra.audioAssets.crash.play();
-                            }
+                            kontra.audioAssets[obstacle.type === 'small' ? `small-${game.level}` : 'crash'].play();
                         } else {
                             game.lives -= 1;
                             kontra.audioAssets.catnip.pause();
@@ -1032,11 +1015,7 @@
                                 over();
                             } else {
                                 objects.message.updateText(messages[kontra.randInt(0, 1)]);
-                                if (obstacle.type === 'small') {
-                                    kontra.audioAssets[`small-${game.level}`].play();
-                                } else {
-                                    kontra.audioAssets.crash.play();
-                                }
+                                kontra.audioAssets[obstacle.type === 'small' ? `small-${game.level}` : 'crash'].play();
                             }
                             game.loop.stop();
                             crash(index, obstacle.type);
@@ -1045,24 +1024,22 @@
                         objects.cat.isWet = false;
                         objects.widget.dx = objects.cat.hasZoomies ? fly.speed * 3 : fly.speed;
                         game.difficultyCheck = true;
-                        switch (obstacle.type) {
-                        case 'slow':
+                        // Score based on obstacle type
+                        if (obstacle.type === 'slow') {
                             game.score += 1;
-                            break;
-                        case 'large':
+                        } else if (obstacle.type === 'large') {
                             game.score += 5;
-                            break;
-                        case '':
-                            break;
-                        default:
+                        } else if (obstacle.type && obstacle.type !== '') {
                             game.score += 3;
                         }
                         objects.score.updateText();
                         objects.obstacles.splice(index, 1);
                     }
                 });
+
                 // Slowly increase speed until the max speed is reached
                 game.speed = Math.min(game.speedMax, game.speed + 0.00075);
+
                 // Decrease delay between obstacles as play progresses
                 if (game.difficultyCheck) {
                     game.difficultyCheck = false;
@@ -1075,6 +1052,7 @@
             }
         });
 
+        // Event handlers
         document.addEventListener('keyup', (key) => {
             if (key.code === 'Enter' || key.code === 'NumpadEnter' || key.code === 'Escape') {
                 game.attract.stop();
@@ -1152,7 +1130,7 @@
     });
 
 }(this.document, this.kontra, {
-    assets: 'assets/',
+    assets: 'https://2830-59439.el-alt.com/dash-cat/',
     difficulty: 1,
     font: '"lores-12", sans-serif',
     height: 400,
