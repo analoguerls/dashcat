@@ -766,7 +766,7 @@
             x: settings.width / 2,
             y: 212
         }));
-        objects.attract.push(createText({
+        objects.attract.push(createSprite({
             animations: objects.sheets.title.animations,
             type: 'title',
             update () {
