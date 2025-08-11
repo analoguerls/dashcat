@@ -475,165 +475,13 @@
             image: kontra.imageAssets.title
         });
 
-        // Background
+        // Attract Mode
         objects.attract.push(createSprite(background, {
             x: 0
         }));
-        objects.sprites.push(createSprite(background, {
-            dx: -0.25,
-            update () {
-                if (this.x < -600) {
-                    this.x = getPosition(600, this.x);
-                }
-                this.advance();
-            },
-            x: 0
-        }));
-        objects.sprites.push(createSprite(background, {
-            dx: -0.25,
-            update () {
-                if (this.x < -600) {
-                    this.x = getPosition(600, this.x);
-                }
-                this.advance();
-            },
-            x: 600
-        }));
-
-        // Ground
         objects.attract.push(createSprite(ground, {
             x: 0
         }));
-        objects.sprites.push(createSprite(ground, {
-            dx: -game.speed,
-            update () {
-                this.dx = setDx();
-                if (this.x < -1200) {
-                    this.x = getPosition(1200, this.x);
-                }
-                this.advance();
-            },
-            x: 0
-        }));
-        objects.sprites.push(createSprite(ground, {
-            dx: -game.speed,
-            update () {
-                this.dx = setDx();
-                if (this.x < -1200) {
-                    this.x = getPosition(1200, this.x);
-                }
-                this.advance();
-            },
-            x: 1200
-        }));
-
-        // Lives indicator
-        objects.sprites.push(createSprite({
-            animations: objects.sheets.bonuses.animations,
-            update () {
-                this.playAnimation('tuna');
-                this.advance();
-            },
-            x: 12,
-            y: 6
-        }));
-        objects.lives = createText({
-            color: '#232323',
-            font: `24px ${settings.font}`,
-            text: `× ${game.lives}`,
-            updateText () {
-                this.text = `× ${game.lives}`;
-            },
-            x: 60,
-            y: 15
-        });
-        objects.sprites.push(objects.lives);
-
-        // Catnip indicator
-        objects.sprites.push(createSprite({
-            animations: objects.sheets.bonuses.animations,
-            update () {
-                if (objects.cat.hasZoomies) {
-                    this.playAnimation('catnip');
-                } else {
-                    this.playAnimation('idle');
-                }
-                this.advance();
-            },
-            x: 100,
-            y: 4
-        }));
-
-        // Box indicators
-        objects.sprites.push(createSprite({
-            animations: objects.sheets.bonuses.animations,
-            update () {
-                this.playAnimation(objects.cat.hasBox ? 'box' : 'idle');
-                this.advance();
-            },
-            x: 145,
-            y: 2
-        }));
-        objects.sprites.push(createSprite({
-            animations: objects.sheets.bonuses.animations,
-            update () {
-                this.playAnimation(objects.cat.hasBox === 2 ? 'box' : 'idle');
-                this.advance();
-            },
-            x: 185,
-            y: 2
-        }));
-
-        // Messages
-        objects.message = createText({
-            anchor: {
-                x: 0.5,
-                y: 0.5
-            },
-            color: '#232323',
-            font: `24px ${settings.font}`,
-            hasMessage: 0,
-            text: '',
-            textAlign: 'center',
-            update () {
-                if (this.hasMessage > 0) {
-                    this.hasMessage -= 1;
-                    if (this.hasMessage === 0) {
-                        this.text = '';
-                    }
-                }
-            },
-            updateText (message) {
-                this.hasMessage = 360;
-                this.text = message;
-            },
-            x: settings.width / 2,
-            y: settings.height / 3
-        });
-        objects.sprites.push(objects.message);
-
-        // Score
-        objects.score = createText({
-            anchor: {
-                x: 1,
-                y: 0
-            },
-            color: '#232323',
-            font: `24px ${settings.font}`,
-            text: `${game.score} / ${game.scoreHigh}`,
-            updateText () {
-                this.text = `${game.score} / ${game.score > game.scoreHigh ? game.score : game.scoreHigh}`;
-                if (game.over && game.score > game.scoreHigh) {
-                    game.scoreHigh = game.score;
-                    kontra.setStoreItem('dash-cat-high-score', game.score);
-                }
-            },
-            x: settings.width - 12,
-            y: 12
-        });
-        objects.sprites.push(objects.score);
-
-        // Attract Mode
         objects.attract.push(createSprite({
             animations: objects.sheets.cat.animations,
             type: 'cat',
@@ -777,6 +625,158 @@
             y: 20
         }));
 
+        // Background
+        objects.sprites.push(createSprite(background, {
+            dx: -0.25,
+            update() {
+                if (this.x < -600) {
+                    this.x = getPosition(600, this.x);
+                }
+                this.advance();
+            },
+            x: 0
+        }));
+        objects.sprites.push(createSprite(background, {
+            dx: -0.25,
+            update() {
+                if (this.x < -600) {
+                    this.x = getPosition(600, this.x);
+                }
+                this.advance();
+            },
+            x: 600
+        }));
+
+        // Ground
+        objects.sprites.push(createSprite(ground, {
+            dx: -game.speed,
+            update() {
+                this.dx = setDx();
+                if (this.x < -1200) {
+                    this.x = getPosition(1200, this.x);
+                }
+                this.advance();
+            },
+            x: 0
+        }));
+        objects.sprites.push(createSprite(ground, {
+            dx: -game.speed,
+            update() {
+                this.dx = setDx();
+                if (this.x < -1200) {
+                    this.x = getPosition(1200, this.x);
+                }
+                this.advance();
+            },
+            x: 1200
+        }));
+
+        // Lives indicator
+        objects.sprites.push(createSprite({
+            animations: objects.sheets.bonuses.animations,
+            update() {
+                this.playAnimation('tuna');
+                this.advance();
+            },
+            x: 12,
+            y: 6
+        }));
+        objects.lives = createText({
+            color: '#232323',
+            font: `24px ${settings.font}`,
+            text: `× ${game.lives}`,
+            updateText() {
+                this.text = `× ${game.lives}`;
+            },
+            x: 60,
+            y: 15
+        });
+        objects.sprites.push(objects.lives);
+
+        // Catnip indicator
+        objects.sprites.push(createSprite({
+            animations: objects.sheets.bonuses.animations,
+            update() {
+                if (objects.cat.hasZoomies) {
+                    this.playAnimation('catnip');
+                } else {
+                    this.playAnimation('idle');
+                }
+                this.advance();
+            },
+            x: 100,
+            y: 4
+        }));
+
+        // Box indicators
+        objects.sprites.push(createSprite({
+            animations: objects.sheets.bonuses.animations,
+            update() {
+                this.playAnimation(objects.cat.hasBox ? 'box' : 'idle');
+                this.advance();
+            },
+            x: 145,
+            y: 2
+        }));
+        objects.sprites.push(createSprite({
+            animations: objects.sheets.bonuses.animations,
+            update() {
+                this.playAnimation(objects.cat.hasBox === 2 ? 'box' : 'idle');
+                this.advance();
+            },
+            x: 185,
+            y: 2
+        }));
+
+        // Messages
+        objects.message = createText({
+            anchor: {
+                x: 0.5,
+                y: 0.5
+            },
+            color: '#232323',
+            font: `24px ${settings.font}`,
+            hasMessage: 0,
+            text: '',
+            textAlign: 'center',
+            update() {
+                if (this.hasMessage > 0) {
+                    this.hasMessage -= 1;
+                    if (this.hasMessage === 0) {
+                        this.text = '';
+                    }
+                }
+            },
+            updateText(message) {
+                this.hasMessage = 360;
+                this.text = message;
+            },
+            x: settings.width / 2,
+            y: settings.height / 3
+        });
+        objects.sprites.push(objects.message);
+
+        // Score
+        objects.score = createText({
+            anchor: {
+                x: 1,
+                y: 0
+            },
+            color: '#232323',
+            font: `24px ${settings.font}`,
+            text: `${game.score} / ${game.scoreHigh}`,
+            updateText() {
+                this.text = `${game.score} / ${game.score > game.scoreHigh ? game.score : game.scoreHigh}`;
+                if (game.over && game.score > game.scoreHigh) {
+                    game.scoreHigh = game.score;
+                    kontra.setStoreItem('dash-cat-high-score', game.score);
+                }
+            },
+            x: settings.width - 12,
+            y: 12
+        });
+        objects.sprites.push(objects.score);
+
         // Cat
         objects.cat = createSprite({
             animations: objects.sheets.cat.animations,
@@ -897,10 +897,9 @@
             render: () => objects.attract.map((sprite) => sprite.render()),
             update: () => objects.attract.map((sprite) => sprite.update())
         });
-
         game.attract.start();
 
-        // Main game loop
+        // Game loop
         game.loop = kontra.GameLoop({
             render () {
                 objects.sprites.map((sprite) => sprite.render());
@@ -1110,7 +1109,6 @@
                 objects.obstacles.push(spawnSprite(true, 2));
             }
         });
-
         window.addEventListener('focus', () => {
             game.hasFocus = true;
             if (!game.musicIsMuted && !game.over && game.running) {
