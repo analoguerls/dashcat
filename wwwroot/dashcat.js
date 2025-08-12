@@ -19,7 +19,7 @@ import {
     setAudioPath,
     setImagePath,
     setStoreItem
-} from 'https://unpkg.com/kontra@10.0.2/kontra.min.mjs';
+} from 'kontra';
 
 const
     {canvas} = init('game'),
