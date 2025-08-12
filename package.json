@@ -8,5 +8,8 @@
   },
   "devDependencies": {
     "eslint": "^9.33.0"
+  },
+  "dependencies": {
+    "kontra": "^10.0.2"
   }
 }

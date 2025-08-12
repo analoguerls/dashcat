@@ -628,7 +628,7 @@
         // Background
         objects.sprites.push(createSprite(background, {
             dx: -0.25,
-            update() {
+            update () {
                 if (this.x < -600) {
                     this.x = getPosition(600, this.x);
                 }
@@ -638,7 +638,7 @@
         }));
         objects.sprites.push(createSprite(background, {
             dx: -0.25,
-            update() {
+            update () {
                 if (this.x < -600) {
                     this.x = getPosition(600, this.x);
                 }
@@ -650,7 +650,7 @@
         // Ground
         objects.sprites.push(createSprite(ground, {
             dx: -game.speed,
-            update() {
+            update () {
                 this.dx = setDx();
                 if (this.x < -1200) {
                     this.x = getPosition(1200, this.x);
@@ -661,7 +661,7 @@
         }));
         objects.sprites.push(createSprite(ground, {
             dx: -game.speed,
-            update() {
+            update () {
                 this.dx = setDx();
                 if (this.x < -1200) {
                     this.x = getPosition(1200, this.x);
@@ -674,7 +674,7 @@
         // Lives indicator
         objects.sprites.push(createSprite({
             animations: objects.sheets.bonuses.animations,
-            update() {
+            update () {
                 this.playAnimation('tuna');
                 this.advance();
             },
@@ -685,7 +685,7 @@
             color: '#232323',
             font: `24px ${settings.font}`,
             text: `× ${game.lives}`,
-            updateText() {
+            updateText () {
                 this.text = `× ${game.lives}`;
             },
             x: 60,
@@ -696,7 +696,7 @@
         // Catnip indicator
         objects.sprites.push(createSprite({
             animations: objects.sheets.bonuses.animations,
-            update() {
+            update () {
                 if (objects.cat.hasZoomies) {
                     this.playAnimation('catnip');
                 } else {
@@ -711,7 +711,7 @@
         // Box indicators
         objects.sprites.push(createSprite({
             animations: objects.sheets.bonuses.animations,
-            update() {
+            update () {
                 this.playAnimation(objects.cat.hasBox ? 'box' : 'idle');
                 this.advance();
             },
@@ -720,7 +720,7 @@
         }));
         objects.sprites.push(createSprite({
             animations: objects.sheets.bonuses.animations,
-            update() {
+            update () {
                 this.playAnimation(objects.cat.hasBox === 2 ? 'box' : 'idle');
                 this.advance();
             },
@@ -739,7 +739,7 @@
             hasMessage: 0,
             text: '',
             textAlign: 'center',
-            update() {
+            update () {
                 if (this.hasMessage > 0) {
                     this.hasMessage -= 1;
                     if (this.hasMessage === 0) {
@@ -747,7 +747,7 @@
                     }
                 }
             },
-            updateText(message) {
+            updateText (message) {
                 this.hasMessage = 360;
                 this.text = message;
             },
@@ -765,7 +765,7 @@
             color: '#232323',
             font: `24px ${settings.font}`,
             text: `${game.score} / ${game.scoreHigh}`,
-            updateText() {
+            updateText () {
                 this.text = `${game.score} / ${game.score > game.scoreHigh ? game.score : game.scoreHigh}`;
                 if (game.over && game.score > game.scoreHigh) {
                     game.scoreHigh = game.score;
