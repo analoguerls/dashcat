@@ -7,7 +7,9 @@
     "lint": "eslint ."
   },
   "devDependencies": {
-    "eslint": "^9.33.0"
+    "eslint": "^9.33.0",
+    "webpack": "^5.101.0",
+    "webpack-cli": "^6.0.1"
   },
   "dependencies": {
     "kontra": "^10.0.2"

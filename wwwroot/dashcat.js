@@ -141,6 +141,7 @@ const
             animations = null,
             asset = null,
             offset = 0,
+            spawn = true,
             type = '',
             x = 0;
 
@@ -188,10 +189,15 @@ const
                     offset = -100;
                     type = 'tuna';
                     x = 48;
+                    break;
+                } else {
+                    spawn = false;
                 }
                 break;
             case 3:
-                if (!objects.cat.hasBox) {
+                if (objects.cat.hasBox) {
+                    spawn = false;
+                } else {
                     animation = 'idle';
                     animations = objects.sheets.box.animations;
                     offset = -6;
@@ -209,7 +215,6 @@ const
                 type = 'catnip';
                 x = 48;
                 break;
-            case 5:
             case 6:
                 animation = 'active';
                 animations = objects.sheets.tentacle.animations;
@@ -218,8 +223,13 @@ const
                 x = 47;
                 break;
             default:
+                spawn = false;
                 break;
             }
+        }
+
+        if (!spawn) {
+            return false;
         }
 
         return Sprite({
@@ -292,6 +302,50 @@ load(
             type: 'ground',
             width: 1200,
             y: defaults.height - 93
+        },
+        handlePause = () => {
+            game.attract.stop();
+            audioAssets.attract.pause();
+            audioAssets.attract.currentTime = 0;
+            if (game.loaded) {
+                if (game.over) {
+                    reset(true);
+                    game.loop.start();
+                } else if (game.running) {
+                    objects.message.text = messages[8];
+                    game.paused = true;
+                } else if (!game.running) {
+                    objects.message.text = '';
+                    game.paused = false;
+                    game.running = true;
+                    game.loop.start();
+                    if (!game.musicIsMuted) {
+                        audioAssets[`level-${game.level}`].loop = true;
+                        audioAssets[`level-${game.level}`].play();
+                    }
+                }
+            }
+        },
+        keyHandlers = {
+            Enter: () => handlePause(),
+            Escape: () => handlePause(),
+            KeyB: () => !objects.cat.hasBox && objects.bonuses.push(spawnSprite(false, 3)),
+            KeyC: () => !objects.cat.hasZoomies && objects.bonuses.push(spawnSprite(false, 2)),
+            KeyL: () => objects.obstacles.push(spawnSprite(true, 3)),
+            KeyM: () => {
+                if (game.musicIsMuted) {
+                    game.musicIsMuted = false;
+                    audioAssets[`level-${game.level}`].loop = true;
+                    audioAssets[`level-${game.level}`].play();
+                } else {
+                    game.musicIsMuted = true;
+                    audioAssets[`level-${game.level}`].pause();
+                }
+            },
+            KeyS: () => objects.obstacles.push(spawnSprite(true, 1)),
+            KeyT: () => objects.bonuses.push(spawnSprite(false, 1)),
+            KeyW: () => objects.obstacles.push(spawnSprite(true, 2)),
+            NumpadEnter: () => handlePause()
         },
         over = function () {
             setTimeout(() => {
@@ -942,7 +996,11 @@ load(
                 objects.obstacles.push(spawnSprite(true));
             }
             if (game.time % Math.trunc((game.spawn + game.difficulty) * game.entropy) === 0) {
-                objects.bonuses.push(spawnSprite(false));
+                const spawn = spawnSprite(false);
+
+                if (spawn) {
+                    objects.bonuses.push(spawn);
+                }
             }
             if (game.paused) {
                 game.running = false;
@@ -1075,56 +1133,10 @@ load(
 
     // Event handlers
     document.addEventListener('keyup', (key) => {
-        if (key.code === 'Enter' || key.code === 'NumpadEnter' || key.code === 'Escape') {
-            game.attract.stop();
-            audioAssets.attract.pause();
-            audioAssets.attract.currentTime = 0;
-            if (game.loaded) {
-                if (game.over) {
-                    reset(true);
-                    game.loop.start();
-                } else if (game.running) {
-                    objects.message.text = messages[8];
-                    game.paused = true;
-                } else if (!game.running) {
-                    objects.message.text = '';
-                    game.paused = false;
-                    game.running = true;
-                    game.loop.start();
-                    if (!game.musicIsMuted) {
-                        audioAssets[`level-${game.level}`].loop = true;
-                        audioAssets[`level-${game.level}`].play();
-                    }
-                }
-            }
-        }
-        if (key.code === 'KeyM') {
-            if (game.musicIsMuted) {
-                game.musicIsMuted = false;
-                audioAssets[`level-${game.level}`].loop = true;
-                audioAssets[`level-${game.level}`].play();
-            } else {
-                game.musicIsMuted = true;
-                audioAssets[`level-${game.level}`].pause();
-            }
-        }
-        if (key.code === 'KeyB' && !objects.cat.hasBox) {
-            objects.bonuses.push(spawnSprite(false, 3));
-        }
-        if (key.code === 'KeyC' && !objects.cat.hasZoomies) {
-            objects.bonuses.push(spawnSprite(false, 2));
-        }
-        if (key.code === 'KeyL') {
-            objects.obstacles.push(spawnSprite(true, 3));
-        }
-        if (key.code === 'KeyS') {
-            objects.obstacles.push(spawnSprite(true, 1));
-        }
-        if (key.code === 'KeyT') {
-            objects.bonuses.push(spawnSprite(false, 1));
-        }
-        if (key.code === 'KeyW') {
-            objects.obstacles.push(spawnSprite(true, 2));
+        const handler = keyHandlers[key.code];
+
+        if (handler) {
+            handler();
         }
     });
     window.addEventListener('focus', () => {
